@@ -29,13 +29,13 @@
        $(document).ready(function() {
        
        function createMemberDiv(img, first_name, last_name, company, pos, email, tags) {
-			var item = "	<div class=\"col-md-6 portfolio-item\"> \
-               					<h2><span class=\"label label-default\">" + first_name + " " + last_name + "</span></h2> \
+			var item = "	<div class=\"col-md-4 portfolio-item\"> \
+               					<h3><span class=\"label label-default\">" + first_name + " " + last_name + "</span></h3> \
                					<div class=\"thumbnail\"> \
                						<img class=\"img-responsive\" src=\"" + img + "\" alt=\"\"> \
                					</div> \
-               					<h4>Company: " + company + "</h4> \
-               					<h4>Position: " + pos + "</h4> \
+               					<h6>Company: " + company + "</h6> \
+               					<h6>Position: " + pos + "</h6> \
                				</div>"
                				
 			return item               				       	
