@@ -31,7 +31,7 @@ class IbcMembersWebService(object):
 			con.row_factory = dict_factory
 			con.text_factory = str
 			cur = con.cursor()
-			cur.execute("SELECT first_name_english,last_name_english,email,company,position,tags FROM members")
+			cur.execute("SELECT first_name_english,last_name_english,email,company,position,tags FROM members ORDER BY last_name_english")
 			results = cur.fetchall()
 			return json.dumps(results, ensure_ascii=False)
              
