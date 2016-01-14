@@ -25,7 +25,7 @@ class IbcMembersWebService(object):
 	exposed = True
 	
 
-	def POST(self):
+	def GET(self):
 		with sqlite3.connect(DB_STRING) as con:
 			cherrypy.session['ts'] = time.time()
 			con.row_factory = dict_factory
@@ -34,6 +34,20 @@ class IbcMembersWebService(object):
 			cur.execute("SELECT first_name_english,last_name_english,email,company,position,tags FROM members ORDER BY last_name_english")
 			results = cur.fetchall()
 			return json.dumps(results, ensure_ascii=False)
+			
+class IbcCategoryWebService(object):
+	exposed = True
+	
+	def GET(self):
+		with sqlite3.connect(DB_STRING) as con:
+			cherrypy.session['ts'] = time.time()
+			con.row_factory = dict_factory
+			con.text_factory = str
+			cur = con.cursor()
+			cur.execute("SELECT DISTINCT category FROM members WHERE category != '' ORDER BY category")
+			results = cur.fetchall()
+			return json.dumps(results, ensure_ascii=False)
+					
              
 def setup_database():
      with sqlite3.connect(DB_STRING) as con:
@@ -46,6 +60,11 @@ if __name__ == '__main__':
              'tools.staticdir.root': os.path.abspath(os.getcwd())
          },
          '/members': {
+             'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+             'tools.response_headers.on': True,
+             'tools.response_headers.headers': [('Content-Type', 'application/json')],
+         },
+         '/categories': {
              'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
              'tools.response_headers.on': True,
              'tools.response_headers.headers': [('Content-Type', 'application/json')],
@@ -72,4 +91,5 @@ if __name__ == '__main__':
      
      webapp = IbcWebMain()
      webapp.members = IbcMembersWebService()
+     webapp.categories = IbcCategoryWebService()
      cherrypy.quickstart(webapp, '/', conf)

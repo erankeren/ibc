@@ -49,6 +49,8 @@
     
 	    members_objs = []
 	    
+	    categories = []
+	    
 	    function trimString(s) {
 		  var l=0, r=s.length -1;
 		  while(l < s.length && s[l] == ' ') l++;
@@ -99,13 +101,7 @@
 		function hookNavbarSearch() {
 			$( "#navbar-search-form" ).submit(function( event ) {
 			
-				event.preventDefault();
-			
-				
-				
-				
-				
-				
+				event.preventDefault();				
 			});
 			
 			$("#navbar-search-input").bind("keyup input paste", function() {
@@ -121,11 +117,9 @@
 			});	
 		}
 		
-		
-		
 		function getAllMembers() {			
 			
-			$.post("/members")
+			$.get("/members")
 				.done(function(string) {
 
 					var json = string;
@@ -139,6 +133,37 @@
 					showMembers(members_objs);
 			});
 			
+		}
+		
+		function handleCategoryClick(cat) {
+			alert(cat);
+		}
+		
+		function getAllCategories() {
+			$.get("/categories")
+				.done(function(string) {
+
+					var json = string;
+
+					$.each(json, function(i, obj) {
+					
+						categories.push(obj);
+						
+						var id = "#" + obj.category;
+						
+						$("#categories-dropdown").append("<li><a href=" + id + ">" + obj.category + "</a></li>");
+						
+						
+						
+						// $(id).live('click', function(event){
+// 						  event.preventDefault();
+// 						  alert("bla");
+// 						  return false;
+// 						});
+					
+					});
+					
+			});
 		}
 		
 		function showMembers(members) {
@@ -163,6 +188,8 @@
 		
 			hookNavbarSearch();
 			
+			getAllCategories();
+			
 			getAllMembers();
 
        });
@@ -184,8 +211,14 @@
 			<a class="navbar-brand" href="#">IBC</a>
 		</div>
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-			<ul class="nav navbar-nav">
-				<li class="active"><a href="#">Directory</a></li>				
+			<ul class="nav navbar-nav" id="navbar-list">
+				<li class="active"><a href="#">Directory</a></li>
+				<li class="dropdown">
+				  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Categories <span class="caret"></span></a>
+				  <ul class="dropdown-menu" id="categories-dropdown">
+					
+				  </ul>
+				</li>			
 			</ul>
 			<div class="col-sm-3 col-md-3 pull-right">
 				<form class="navbar-form" role="search" id="navbar-search-form">
