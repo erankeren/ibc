@@ -46,43 +46,49 @@
     
     <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
     <script type="text/javascript">
-       $(document).ready(function() {
-       
-       function createMemberDiv(img, first_name, last_name, company, pos, email, tags) {
+    	
+		function createMemberDiv(img, first_name, last_name, company, pos, email, tags) {
 			var item = "	<div class=\"col-md-4 portfolio-item\"> \
-               					<h3><span class=\"label label-default\">" + last_name + " " + first_name + "</span></h3> \
-               					<div class=\"thumbnail\"> \
-               						<img class=\"img-responsive\" src=\"" + img + "\" alt=\"\"> \
-               						<h6>Company: " + company + "</h6> \
-               						<h6>Position: " + pos + "</h6> \
-               						<button type=\"button\" class=\"btn btn-primary btn-xs\" data-toggle=\"modal\" data-target=\"#moreInfoModal\">More Info...</button> \
-               					</div> \
-               				</div>"
-               				
-			return item               				       	
-       }
-
-		$.post("/members")
-			.done(function(string) {
-
-				var json = string
-
-				$.each(json, function(i, obj) {
-					
-					var member = createMemberDiv ("img/user73.png", 
-													obj.first_name_english, 
-													obj.last_name_english,
-													obj.company,
-													obj.position, 
-													obj.email,
-													obj.tags)
-													
-					$("#members-list-container").append(member)
-					
-					
-				});
+								<h3><span class=\"label label-default\">" + last_name + " " + first_name + "</span></h3> \
+								<div class=\"thumbnail\"> \
+									<img class=\"img-responsive\" src=\"" + img + "\" alt=\"\"> \
+									<h6>Company: " + company + "</h6> \
+									<h6>Position: " + pos + "</h6> \
+									<button type=\"button\" class=\"btn btn-primary btn-xs\" data-toggle=\"modal\" data-target=\"#moreInfoModal\">More Info...</button> \
+								</div> \
+							</div>"
 				
-		});
+			return item               				       	
+		}
+		   
+		$(document).ready(function() {
+		
+			$( "#navbar-search" ).submit(function( event ) {
+			  
+			  event.preventDefault();
+			});		   
+
+			$.post("/members")
+				.done(function(string) {
+
+					var json = string
+
+					$.each(json, function(i, obj) {
+					
+						var member = createMemberDiv ("img/user73.png", 
+														obj.first_name_english, 
+														obj.last_name_english,
+														obj.company,
+														obj.position, 
+														obj.email,
+														obj.tags)
+													
+						$("#members-list-container").append(member)
+					
+					
+					});
+				
+			});
            
 
        });
@@ -93,44 +99,34 @@
 <body>
 
     <!-- Navigation -->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">IBC</a>
-            </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="#">Directory</a>
-                    </li>                    
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container -->
-    </nav>
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="#">IBC</a>
+		</div>
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="#">Directory</a></li>				
+			</ul>
+			<div class="col-sm-3 col-md-3 pull-right">
+				<form class="navbar-form" role="search" id="navbar-search">
+					<div class="input-group">
+						<input type="text" class="form-control" placeholder="Search" name="q">
+						<div class="input-group-btn">
+							<button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+						</div>
+					</div>
+				</form>
+			</div>        
+		</div>
+	</nav>
     
-    <div class="container">
-    	<div class="row">
-        	<div class="col-lg-12">
-				<div class="input-group">
-				  <input type="text" class="form-control" placeholder="Search for...">
-				  <span class="input-group-btn">
-					<button class="btn btn-default" type="button">Go!</button>
-				  </span>
-				</div><!-- /input-group -->
-			<div class="col-lg-12">
-    	</div>
-    </div>
-
+    
     <!-- Page Content -->
     <div class="container">
 
