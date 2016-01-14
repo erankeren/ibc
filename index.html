@@ -46,7 +46,42 @@
     
     <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
     <script type="text/javascript">
-    	
+    
+	    members_objs = []
+	    
+	    function trimString(s) {
+		  var l=0, r=s.length -1;
+		  while(l < s.length && s[l] == ' ') l++;
+		  while(r > l && s[r] == ' ') r-=1;
+		  return s.substring(l, r+1);
+		}
+
+		function compareObjects(o1, o2) {
+		  var k = '';
+		  for(k in o1) if(o1[k] != o2[k]) return false;
+		  for(k in o2) if(o1[k] != o2[k]) return false;
+		  return true;
+		}
+
+		function itemExists(haystack, needle) {
+		  for(var i=0; i<haystack.length; i++) if(compareObjects(haystack[i], needle)) return true;
+		  return false;
+		}
+
+		function searchFor(toSearch, objects) {
+		  var results = [];
+		  toSearch = trimString(toSearch); // trim it
+		  for(var i=0; i<objects.length; i++) {
+			for(var key in objects[i]) {
+			  var str = objects[i][key];
+			  if(str.toLowerCase().indexOf(toSearch.toLowerCase())!=-1) {
+				if(!itemExists(results, objects[i])) results.push(objects[i]);
+			  }
+			}
+		  }
+		  return results;
+		}
+		
 		function createMemberDiv(img, first_name, last_name, company, pos, email, tags) {
 			var item = "	<div class=\"col-md-4 portfolio-item\"> \
 								<h3><span class=\"label label-default\">" + last_name + " " + first_name + "</span></h3> \
@@ -60,36 +95,75 @@
 				
 			return item               				       	
 		}
-		   
-		$(document).ready(function() {
 		
-			$( "#navbar-search" ).submit(function( event ) {
-			  
-			  event.preventDefault();
-			});		   
-
+		function hookNavbarSearch() {
+			$( "#navbar-search-form" ).submit(function( event ) {
+			
+				event.preventDefault();
+			
+				
+				
+				
+				
+				
+			});
+			
+			$("#navbar-search-input").bind("keyup input paste", function() {
+				var txt = $("#navbar-search-input").val();
+				
+				var filtered = searchFor(txt, members_objs);
+				
+				showMembers (filtered);
+			});
+			
+			$("#navbar-search-input").change(function() {
+				
+			});	
+		}
+		
+		
+		
+		function getAllMembers() {			
+			
 			$.post("/members")
 				.done(function(string) {
 
-					var json = string
+					var json = string;
 
 					$.each(json, function(i, obj) {
 					
-						var member = createMemberDiv ("img/user73.png", 
+						members_objs.push(obj);
+					
+					});
+					
+					showMembers(members_objs);
+			});
+			
+		}
+		
+		function showMembers(members) {
+			
+			$("#members-list-container").empty();
+			
+	    	$.each(members, function (i, obj) {
+				var div = createMemberDiv ("img/user73.png", 
 														obj.first_name_english, 
 														obj.last_name_english,
 														obj.company,
 														obj.position, 
 														obj.email,
-														obj.tags)
-													
-						$("#members-list-container").append(member)
-					
-					
-					});
-				
+														obj.tags);
+														
+				$("#members-list-container").append(div);														
 			});
-           
+	    }
+		
+	    //entry hook
+		$(document).ready(function() {
+		
+			hookNavbarSearch();
+			
+			getAllMembers();
 
        });
      </script>
@@ -114,9 +188,9 @@
 				<li class="active"><a href="#">Directory</a></li>				
 			</ul>
 			<div class="col-sm-3 col-md-3 pull-right">
-				<form class="navbar-form" role="search" id="navbar-search">
+				<form class="navbar-form" role="search" id="navbar-search-form">
 					<div class="input-group">
-						<input type="text" class="form-control" placeholder="Search" name="q">
+						<input type="text" class="form-control" placeholder="Search" id="navbar-search-input">
 						<div class="input-group-btn">
 							<button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
 						</div>
