@@ -51,6 +51,8 @@
 	    
 	    categories = []
 	    
+	    categories_id_mapping = {}
+	    
 	    function trimString(s) {
 		  var l=0, r=s.length -1;
 		  while(l < s.length && s[l] == ' ') l++;
@@ -84,9 +86,14 @@
 		  return results;
 		}
 		
-		function createMemberDiv(img, first_name, last_name, company, pos, email, tags) {
+		function isEmpty(str) {
+			return (!str || 0 === str.length);
+		}
+		
+		function createMemberDiv(img, first_name, last_name, company, pos, email, tags, category) {
 			var item = "	<div class=\"col-md-4 portfolio-item\"> \
 								<h3><span class=\"label label-default\">" + last_name + " " + first_name + "</span></h3> \
+								<h5><span class=\"label label-primary\">" + category + "</span></h5> \
 								<div class=\"thumbnail\"> \
 									<img class=\"img-responsive\" src=\"" + img + "\" alt=\"\"> \
 									<h6>Company: " + company + "</h6> \
@@ -126,6 +133,10 @@
 
 					$.each(json, function(i, obj) {
 					
+						if (isEmpty(obj.category)) {
+							obj.category = "General";
+						}
+					
 						members_objs.push(obj);
 					
 					});
@@ -135,11 +146,10 @@
 			
 		}
 		
-		function handleCategoryClick(cat) {
-			alert(cat);
-		}
-		
 		function getAllCategories() {
+		
+			categories.push("General");
+		
 			$.get("/categories")
 				.done(function(string) {
 
@@ -147,23 +157,45 @@
 
 					$.each(json, function(i, obj) {
 					
-						categories.push(obj);
-						
-						var id = "#" + obj.category;
-						
-						$("#categories-dropdown").append("<li><a href=" + id + ">" + obj.category + "</a></li>");
-						
-						
-						
-						// $(id).live('click', function(event){
-// 						  event.preventDefault();
-// 						  alert("bla");
-// 						  return false;
-// 						});
-					
+						categories.push(obj.category);
 					});
 					
+					fillCategories();
+					
 			});
+		}
+		
+		function fillCategories() {
+		
+			$.each(categories, function(i, obj) {
+			
+				var id = "category" +i;
+						
+				categories_id_mapping[id] = obj;
+				
+				$("#categories-dropdown").append("<li><a href=\"#\" id=" + id + ">" + obj + "</a></li>");
+				
+				$("#" + id).click(categoryClicked);
+				
+			});
+		}
+		
+		function categoryClicked(event) {
+			event.preventDefault();
+			
+			var cat_id = $(this).attr('id');
+			
+			var cat = categories_id_mapping[cat_id];
+			
+			var to_show = [];
+			
+			$.each(members_objs, function(i, obj) {
+				if (obj.category === cat) {
+					to_show.push(obj);
+				}
+			});
+				
+			showMembers (to_show);
 		}
 		
 		function showMembers(members) {
@@ -177,7 +209,8 @@
 														obj.company,
 														obj.position, 
 														obj.email,
-														obj.tags);
+														obj.tags,
+														obj.category);
 														
 				$("#members-list-container").append(div);														
 			});
@@ -187,6 +220,11 @@
 		$(document).ready(function() {
 		
 			hookNavbarSearch();
+			
+			$("#all-link").click(function() {
+				showMembers(members_objs);
+			});
+			
 			
 			getAllCategories();
 			
@@ -212,7 +250,7 @@
 		</div>
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav" id="navbar-list">
-				<li class="active"><a href="#">Directory</a></li>
+				<li class="active"><a href="#" id="all-link">All</a></li>
 				<li class="dropdown">
 				  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Categories <span class="caret"></span></a>
 				  <ul class="dropdown-menu" id="categories-dropdown">
