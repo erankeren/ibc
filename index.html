@@ -148,7 +148,9 @@
 		
 		function getAllCategories() {
 		
-			categories.push("General");
+			
+		
+			
 		
 			$.get("/categories")
 				.done(function(string) {
@@ -166,6 +168,12 @@
 		}
 		
 		function fillCategories() {
+			
+			categories.push("General");
+		
+			categories.sort();
+			
+			categories.unshift("All");
 		
 			$.each(categories, function(i, obj) {
 			
@@ -174,6 +182,11 @@
 				categories_id_mapping[id] = obj;
 				
 				$("#categories-dropdown").append("<li><a href=\"#\" id=" + id + ">" + obj + "</a></li>");
+				
+				if (obj === "All") {
+					$("#categories-dropdown").append("<li role=\"separator\" class=\"divider\"></li>");
+				
+				}
 				
 				$("#" + id).click(categoryClicked);
 				
@@ -187,15 +200,24 @@
 			
 			var cat = categories_id_mapping[cat_id];
 			
-			var to_show = [];
+			$("#category-text").html(cat +' <span class="caret"></span>');
 			
-			$.each(members_objs, function(i, obj) {
-				if (obj.category === cat) {
-					to_show.push(obj);
-				}
-			});
+			if (cat === "All") {
+				showMembers (members_objs);
+			}
+			else {
+				var to_show = [];
+			
+				$.each(members_objs, function(i, obj) {
+					if (obj.category === cat) {
+						to_show.push(obj);
+					}
+				});
 				
-			showMembers (to_show);
+				showMembers (to_show);
+			}
+			
+			
 		}
 		
 		function showMembers(members) {
@@ -250,9 +272,8 @@
 		</div>
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav" id="navbar-list">
-				<li class="active"><a href="#" id="all-link">All</a></li>
-				<li class="dropdown">
-				  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Categories <span class="caret"></span></a>
+				<li class="active dropdown">
+				  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="category-text">All <span class="caret"></span></a>
 				  <ul class="dropdown-menu" id="categories-dropdown">
 					
 				  </ul>
