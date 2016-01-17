@@ -90,8 +90,24 @@
 			return (!str || 0 === str.length);
 		}
 		
-		function createMemberDiv(img, first_name, last_name, company, pos, email, tags, category) {
-			var item = "	<div class=\"col-md-4 portfolio-item\"> \
+		function replaceAll(str, find, replace) {
+		  return str.replace(new RegExp(find, 'g'), replace);
+		}
+		
+		function jq( myid ) {
+ 
+			return "#" + myid.replace( /(:|\.|\[|\]|,)/g, "\\$1" );
+ 
+		}
+		
+		function createRandomDivId() {
+			var temp = Math.random().toString(36);
+			var res = "id-" + temp.substring(5,8);
+			return res;
+		}
+		
+		function createMemberDiv(div_id, img, first_name, last_name, company, pos, email, tags, category) {
+			var item = "	<div id =" + div_id + " class=\"col-md-4 portfolio-item\"> \
 								<h3><span class=\"label label-default\">" + last_name + " " + first_name + "</span></h3> \
 								<h5><span class=\"label label-primary\">" + category + "</span></h5> \
 								<div class=\"thumbnail\"> \
@@ -102,7 +118,7 @@
 								</div> \
 							</div>"
 				
-			return item               				       	
+			return item;           				       	
 		}
 		
 		function hookNavbarSearch() {
@@ -147,11 +163,6 @@
 		}
 		
 		function getAllCategories() {
-		
-			
-		
-			
-		
 			$.get("/categories")
 				.done(function(string) {
 
@@ -188,7 +199,7 @@
 				
 				}
 				
-				$("#" + id).click(categoryClicked);
+				$( jq( id )).click(categoryClicked);
 				
 			});
 		}
@@ -225,7 +236,8 @@
 			$("#members-list-container").empty();
 			
 	    	$.each(members, function (i, obj) {
-				var div = createMemberDiv ("img/user73.png", 
+	    		var div_id = createRandomDivId();
+				var div = createMemberDiv (div_id, "img/user73.png", 
 														obj.first_name_english, 
 														obj.last_name_english,
 														obj.company,
@@ -234,7 +246,12 @@
 														obj.tags,
 														obj.category);
 														
-				$("#members-list-container").append(div);														
+														
+				$("#members-list-container").append(div);
+				
+				$( jq( div_id )).click(function() {
+					console.log(obj.email);
+				});														
 			});
 	    }
 		
@@ -242,11 +259,6 @@
 		$(document).ready(function() {
 		
 			hookNavbarSearch();
-			
-			$("#all-link").click(function() {
-				showMembers(members_objs);
-			});
-			
 			
 			getAllCategories();
 			
