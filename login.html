@@ -28,16 +28,17 @@
     			
     			var password = $("#userPassword").val();
     			
-    			$.ajax({
+    			var posting = $.ajax({
 					'type'        : 'POST',
 					'dataType'    : 'JSON',
 					'contentType' : 'application/json',
 					'url'         : '/login',
 					'data'        : JSON.stringify({'user': user, 'password' : password})
-				 })
-				 	.always(function() {
-				 		location.reload();
-				 	});
+				 });
+    			
+    			posting.done(function( data ) {
+    				location.reload();
+    			});
     			
     		});
     	
@@ -54,7 +55,7 @@
     <div class="row">
         <div class="col-md-offset-5 col-md-3">
             <div class="form-login">
-				<h4>Welcome back.</h4>
+            	<img style="margin-left:-30px; margin-bottom:30px" src="img/logo-new.png">
 				<input type="text" id="userName" class="form-control input-sm chat-input" placeholder="email" />
 				</br>
 				<input type="password" id="userPassword" class="form-control input-sm chat-input" placeholder="password" />
