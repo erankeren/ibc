@@ -108,14 +108,12 @@
 		
 		function createMemberDiv(div_id, img, first_name, last_name, company, pos, email, tags, category) {
 			var item = "	<div id =" + div_id + " class=\"col-md-4 portfolio-item\"> \
-								<h3><span class=\"label label-default\">" + last_name + " " + first_name + "</span></h3> \
-								<h5><span class=\"label label-primary\">" + category + "</span></h5> \
-								<div class=\"thumbnail\"> \
-									<img class=\"img-responsive\" src=\"" + img + "\" alt=\"\"> \
-									<h6>Company: " + company + "</h6> \
-									<h6>Position: " + pos + "</h6> \
-									<button type=\"button\" class=\"btn btn-primary btn-xs\" data-toggle=\"modal\" data-target=\"#moreInfoModal\">More Info...</button> \
-								</div> \
+								<img class=\"imgBorder pull-left img-responsive member-pic\" src=\"" + img + "\" alt=\"\"> \
+								<h5><span class=\"member-name\">" + last_name + " " + first_name + "</span></h5> \
+								<!-- <p>" + category + "</p> -->\
+								<h6><span class=\"member-text\">" + company + "</span></h6> \
+								<h6><span class=\"member-text\">" + pos + "</span></h6> \
+								<!-- <button type=\"button\" class=\"btn btn-primary btn-xs\" data-toggle=\"modal\" data-target=\"#moreInfoModal\">More Info...</button> -->\
 							</div>"
 				
 			return item;           				       	
@@ -237,7 +235,7 @@
 			
 	    	$.each(members, function (i, obj) {
 	    		var div_id = createRandomDivId();
-				var div = createMemberDiv (div_id, "img/user73.png", 
+				var div = createMemberDiv (div_id, "img/profile_img.png", 
 														obj.first_name_english, 
 														obj.last_name_english,
 														obj.company,
@@ -247,11 +245,17 @@
 														obj.category);
 														
 														
-				$("#members-list-container").append(div);
-				
-				$( jq( div_id )).click(function() {
-					console.log(obj.email);
-				});														
+				$("#members-list-container").append(div);											
+
+				$(jq( div_id )).hover(function() { // Mouse over
+				  $(this).siblings().stop().fadeTo(300, 0.6);
+				  $(this).parent().siblings().stop().fadeTo(300, 0.3); 
+				  $(this).toggleClass('rotated');
+				}, function() { // Mouse out
+				  $(this).siblings().stop().fadeTo(300, 1);
+				  $(this).parent().siblings().stop().fadeTo(300, 1);
+				  $(this).toggleClass('rotated');
+				});
 			});
 	    }
 		
@@ -263,6 +267,8 @@
 			getAllCategories();
 			
 			getAllMembers();
+			
+			
 
        });
      </script>
