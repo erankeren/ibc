@@ -42,7 +42,6 @@ class IbcLogoutWebService(object):
 	@cherrypy.expose
 	def POST(self):
 		cherrypy.lib.sessions.expire()
-		return open('login.html')
 		
 class IbcMembersWebService(object):
 	exposed = True
