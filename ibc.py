@@ -19,8 +19,31 @@ def dict_factory(cursor, row):
 class IbcWebMain(object):
     @cherrypy.expose
     def index(self):
-        return open('index.html')
+    	if 'user' not in cherrypy.session:
+    		return open('login.html')
+    	return open('index.html')
+    	
+class IbcLoginWebService(object):
+	exposed = True
+	
+	@cherrypy.tools.json_in()
+	def POST(self):
+		data = cherrypy.request.json
+		if data['user'] == 'a@a.com' and data['password'] == '1234':
+			cherrypy.session['user'] = 'a@a.com';
+			return json.dumps({'result': 'ok'}, ensure_ascii=False)
+		
+		return json.dumps({'result': 'failed'}, ensure_ascii=False)
 
+
+class IbcLogoutWebService(object):
+	exposed = True
+	
+	@cherrypy.expose
+	def POST(self):
+		cherrypy.lib.sessions.expire()
+		return open('login.html')
+		
 class IbcMembersWebService(object):
 	exposed = True
 	
@@ -59,6 +82,16 @@ if __name__ == '__main__':
              'tools.sessions.on': True,
              'tools.staticdir.root': os.path.abspath(os.getcwd())
          },
+         '/logout': {
+             'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+             'tools.response_headers.on': True,
+             'tools.response_headers.headers': [('Content-Type', 'application/json')],
+         },
+         '/login': {
+             'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+             'tools.response_headers.on': True,
+             'tools.response_headers.headers': [('Content-Type', 'application/json')],
+         },
          '/members': {
              'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
              'tools.response_headers.on': True,
@@ -90,6 +123,8 @@ if __name__ == '__main__':
      cherrypy.engine.subscribe('start', setup_database)
      
      webapp = IbcWebMain()
+     webapp.login = IbcLoginWebService()
+     webapp.logout = IbcLogoutWebService()
      webapp.members = IbcMembersWebService()
      webapp.categories = IbcCategoryWebService()
      cherrypy.quickstart(webapp, '/', conf)
