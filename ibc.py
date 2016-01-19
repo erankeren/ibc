@@ -6,6 +6,8 @@ import time
 import cherrypy
 import json
 
+from string import digits
+
 DB_STRING = "ibc.db"
 
 def dict_factory(cursor, row):
@@ -29,12 +31,19 @@ class IbcLoginWebService(object):
 	@cherrypy.tools.json_in()
 	def POST(self):
 		data = cherrypy.request.json
-		if data['user'] == 'a@a.com' and data['password'] == '1234':
-			cherrypy.session['user'] = 'a@a.com';
-			return json.dumps({'result': 'ok'}, ensure_ascii=False)
-		
-		return json.dumps({'result': 'failed'}, ensure_ascii=False)
-
+		with sqlite3.connect(DB_STRING) as con:
+			cur = con.cursor()
+			str = "SELECT * FROM login WHERE email=\"{}\" AND password=\"{}\"".format(data['user'], data['password'])
+			print str
+			cur.execute(str)
+			results = cur.fetchall();
+			print results;
+			
+			if results and results[0]:
+				cherrypy.session['user'] = 'a@a.com';
+				return json.dumps({'result': 'ok'}, ensure_ascii=False)
+			else:
+				return json.dumps({'result': 'failed'}, ensure_ascii=False)
 
 class IbcLogoutWebService(object):
 	exposed = True
@@ -70,10 +79,26 @@ class IbcCategoryWebService(object):
 			results = cur.fetchall()
 			return json.dumps(results, ensure_ascii=False)
 					
-             
+
+def randomword(length):
+   return ''.join(random.choice(digits) for i in range(length))
+               
 def setup_database():
      with sqlite3.connect(DB_STRING) as con:
          con.execute("CREATE TABLE IF NOT EXISTS members (last_name_hebrew TEXT, first_name_hebrew TEXT, last_name_english TEXT, first_name_english TEXT, email TEXT, phone TEXT, company TEXT, position TEXT, category TEXT, tags TEXT, webpage TEXT)")
+         con.execute("CREATE TABLE IF NOT EXISTS login (email TEXT, password TEXT)")
+         
+         #making all emails lower case
+         con.execute("UPDATE members SET email = lower(email)");
+         
+         cur = con.cursor()
+         cur.execute("SELECT email FROM members WHERE email NOT IN (SELECT email from login)")
+         res = cur.fetchall();
+         
+         for index in res:
+         	str = "INSERT INTO login (email,password) VALUES (\"{}\",\"{}\")".format(index[0], randomword(12))
+         	con.execute(str)
+         
          
 if __name__ == '__main__':
      conf = {
