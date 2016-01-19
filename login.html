@@ -21,28 +21,66 @@
     <script type="text/javascript">
     	$(document).ready(function() {
     	
+    		$("#userName").focus();
+    	
     		$("#login-button").click(function(event) {
     			event.preventDefault();
     			
-    			var user = $("#userName").val();
-    			
-    			var password = $("#userPassword").val();
-    			
-    			var posting = $.ajax({
-					'type'        : 'POST',
-					'dataType'    : 'JSON',
-					'contentType' : 'application/json',
-					'url'         : '/login',
-					'data'        : JSON.stringify({'user': user, 'password' : password})
-				 });
-    			
-    			posting.done(function( data ) {
-    				location.reload();
-    			});
+    			doLogin();
     			
     		});
+    		
+    		//bind enter to login
+    		$(document).keypress(function(e) {
+			  if(e.which == 13) {
+				// enter pressed
+				
+				doLogin();
+			  }
+			});
+			
+			hideAlerts();
     	
     	});
+    	
+    	function hideAlerts() {
+    		$("#login-ok-alert").hide();
+			$("#login-failed-alert").hide();
+    	}
+    	
+    	
+    	function doLogin() {
+    		
+    		hideAlerts();
+    		var user = $("#userName").val();
+    			
+			var password = $("#userPassword").val();
+			
+			var posting = $.ajax({
+				'type'        : 'POST',
+				'dataType'    : 'JSON',
+				'contentType' : 'application/json',
+				'url'         : '/login',
+				'data'        : JSON.stringify({'user': user, 'password' : password})
+			 });
+			
+			posting.done(function( json ) {
+				if (json.result === "ok") {
+					$("#login-ok-alert").show("fast");
+					$("#userName").hide();
+					$("#userPassword").hide();
+					$("#login-button").hide();
+					setTimeout(function(){
+					  location.reload(true);
+					}, 2000);
+					
+				}
+				else {
+					$("#login-failed-alert").show("slow");
+				}
+				
+			});
+    	}
     </script>
 
 
@@ -55,18 +93,24 @@
     <div class="row">
         <div class="col-md-offset-5 col-md-3">
             <div class="form-login">
-            	<img style="margin-left:-30px; margin-bottom:30px" src="img/logo-new.png">
+            	<img style="margin-left:-30px; margin-bottom:30px; margin-top:100%;" src="img/logo-new.png">
+            	
+            	<div class="alert alert-success" id="login-ok-alert">
+				  <strong>Successful login!</strong>
+				</div>
+				
+				<div class="alert alert-danger" id="login-failed-alert">
+				  <strong>Login Failed!</strong> Please try again...
+				</div>
+				
 				<input type="text" id="userName" class="form-control input-sm chat-input" placeholder="email" />
 				</br>
 				<input type="password" id="userPassword" class="form-control input-sm chat-input" placeholder="password" />
 				</br>
-				<div class="wrapper">
-					<span class="group-btn">     
-						<a href="#" class="btn btn-primary btn-md" id="login-button">login <i class="fa fa-sign-in"></i></a>
-					</span>
+				<div class="wrapper" style="display:block; width:100%;">
+					<button class="btn btn-default" type="submit" id="login-button" style="width:100%;">Login <i class="glyphicon glyphicon-log-in"></i></button>
 				</div>
-            </div>
-        
+            </div>        
         </div>
     </div>
 </div>

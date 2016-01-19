@@ -102,7 +102,7 @@
 		
 		function createRandomDivId() {
 			var temp = Math.random().toString(36);
-			var res = "id-" + temp.substring(5,8);
+			var res = "id-" + temp.substring(6);
 			return res;
 		}
 		
@@ -186,7 +186,7 @@
 		
 			$.each(categories, function(i, obj) {
 			
-				var id = "category" +i;
+				var id = createRandomDivId();
 						
 				categories_id_mapping[id] = obj;
 				
@@ -258,17 +258,10 @@
 				});
 			});
 	    }
-		
-	    //entry hook
-		$(document).ready(function() {
-		
-			hookNavbarSearch();
-			
-			getAllCategories();
-			
-			getAllMembers();
-			
-			$("#logout-btn").click(function() {
+	    
+	    function hookLogout() {
+	    
+	    	$("#logout-btn").click(function() {
 			
 				var posting = $.ajax({
 					'type'        : 'POST',
@@ -281,8 +274,18 @@
 				 		location.reload();
 				 	});
 			});
+	    }
+		
+	    //entry hook
+		$(document).ready(function() {
+		
+			hookNavbarSearch();
 			
+			getAllCategories();
 			
+			getAllMembers();
+			
+			hookLogout();
 
        });
      </script>
@@ -325,7 +328,7 @@
 					
 					<div class="input-group">
 						<div class="input-group-btn">
-							<button class="btn btn-default" type="submit" id="logout-btn"><i class="glyphicon glyphicon-user"></i></button>
+							<button class="btn btn-default" type="submit" id="logout-btn"><i class="glyphicon glyphicon-log-out"></i></button>
 						</div>
 					</div>
 					
