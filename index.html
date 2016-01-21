@@ -20,6 +20,7 @@
     <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
     <!-- <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script> -->
     <script type="text/javascript" src="/js/jquery.bootpag.js"></script>
+    <script type="text/javascript" src="/js/ibc.members.js"></script>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -50,8 +51,8 @@
     
     <script type="text/javascript">
     
-	    members_objs = []
-	    
+	    var members = new Members("members-container", "page-selection", 12);
+     
 	    categories = []
 	    
 	    categories_id_mapping = {}
@@ -107,20 +108,8 @@
 			var temp = Math.random().toString(36);
 			var res = "id-" + temp.substring(6);
 			return res;
-		}
+		};
 		
-		function createMemberDiv(div_id, img, first_name, last_name, company, pos, email, tags, category) {
-			var item = "	<div id =" + div_id + " class=\"col-md-4 portfolio-item\"> \
-								<img class=\"imgBorder pull-left img-responsive member-pic\" src=\"" + img + "\" alt=\"\"> \
-								<h5><span class=\"member-name\">" + last_name + " " + first_name + "</span></h5> \
-								<!-- <p>" + category + "</p> -->\
-								<h6><span class=\"member-text\">" + company + "</span></h6> \
-								<h6><span class=\"member-text\">" + pos + "</span></h6> \
-								<!-- <button type=\"button\" class=\"btn btn-primary btn-xs\" data-toggle=\"modal\" data-target=\"#moreInfoModal\">More Info...</button> -->\
-							</div>"
-				
-			return item;           				       	
-		}
 		
 		function hookNavbarSearch() {
 			$( "#navbar-search-form" ).submit(function( event ) {
@@ -131,37 +120,15 @@
 			$("#navbar-search-input").bind("keyup input paste", function() {
 				var txt = $("#navbar-search-input").val();
 				
-				var filtered = searchFor(txt, members_objs);
+				var filter = members.filterByText(txt);
 				
-				showMembers (filtered);
+				members.show(filter);
 			});
 			
 			$("#navbar-search-input").change(function() {
 				
 			});	
-		}
-		
-		function getAllMembers() {			
-			
-			$.get("/members")
-				.done(function(string) {
-
-					var json = string;
-
-					$.each(json, function(i, obj) {
-					
-						if (isEmpty(obj.category)) {
-							obj.category = "General";
-						}
-					
-						members_objs.push(obj);
-					
-					});
-					
-					showMembers(members_objs);
-			});
-			
-		}
+		};
 		
 		function getAllCategories() {
 			$.get("/categories")
@@ -177,7 +144,7 @@
 					fillCategories();
 					
 			});
-		}
+		};
 		
 		function fillCategories() {
 			
@@ -203,7 +170,7 @@
 				$( jq( id )).click(categoryClicked);
 				
 			});
-		}
+		};
 		
 		function categoryClicked(event) {
 			event.preventDefault();
@@ -215,80 +182,13 @@
 			$("#category-text").html(cat +' <span class="caret"></span>');
 			
 			if (cat === "All") {
-				showMembers (members_objs);
+				members.showAll();
 			}
 			else {
-				var to_show = [];
-			
-				$.each(members_objs, function(i, obj) {
-					if (obj.category === cat) {
-						to_show.push(obj);
-					}
-				});
-				
-				showMembers (to_show);
+				var filter = members.filterByCategory(cat);
+				members.show(filter);
 			}
-			
-			
-		}
-		
-		function showMembers(members) {
-	
-			$(jq("members-container")).empty();
-			
-			//calc number of rows we need
-			//3 items per row
-			
-			var number_of_rows;
-			if (members.length % 3 ==0) {
-				number_of_rows = members.length/3;
-			}
-			else {
-				number_of_rows = Math.round(members.length/3) + 1;
-			}
-			
-			for (i = 0; i < number_of_rows; i++) {
-			
-				//create the row
-				var row_id = createRandomDivId();
-				var row = "<div class=\"row\" id=\"" + row_id + "\"></div>";
-				$(jq("members-container")).append(row);
-			
-				//add members to row
-				for (j = 0 ; j < 3 ; j++) {
-					if (j+3*i >=  members.length) {
-						break;
-					}
-					
-					var curr_member = members[j+3*i];
-					
-					//create member div
-					var div_id = createRandomDivId();
-					var div = createMemberDiv (div_id, "img/profile_img.png", 
-															curr_member.first_name_english, 
-															curr_member.last_name_english,
-															curr_member.company,
-															curr_member.position, 
-															curr_member.email,
-															curr_member.tags,
-															curr_member.category);
-					
-					//add to row										
-					$(jq(row_id)).append(div);
-					
-					//adjust the mouse over member div
-					$(jq( div_id )).hover(function() { // Mouse over
-					  $(this).siblings().stop().fadeTo(300, 0.6);
-					  $(this).parent().siblings().stop().fadeTo(300, 0.3); 
-					  $(this).toggleClass('rotated');
-					}, function() { // Mouse out
-					  $(this).siblings().stop().fadeTo(300, 1);
-					  $(this).parent().siblings().stop().fadeTo(300, 1);
-					  $(this).toggleClass('rotated');
-					});
-				}
-			}
-	    }
+		};
 	    
 	    function hookLogout() {
 	    
@@ -305,25 +205,24 @@
 				 		location.reload();
 				 	});
 			});
-	    }
+	    };
 		
 	    //entry hook
 		$(document).ready(function() {
 		
 			hookNavbarSearch();
 			
-			getAllCategories();
+			getAllCategories();			
 			
-			getAllMembers();
+			members.init();
+			
+			members.getAll(function() {
+				members.showAll();
+			});
+			
+			//getAllMembers();
 			
 			hookLogout();
-			
-			// init bootpag
-			$("#page-selection").bootpag({
-					total: 10
-				}).on("page", function(event, /* page number here */ num){
-					 console.log(num);
-				});
 
        });
      </script>
@@ -385,64 +284,22 @@
     	
     	</div>
     	
-    	<div class="row text-center" id="page-selection">
-    	
-    	</div>
-
-        <!-- /.row -->
-
-<!-- 
-
-        <hr>
- -->
-
-        <!-- 
-Pagination        <div class="row text-center">
-            <div class="col-lg-12">
-                <ul class="pagination">
-                    <li>
-                        <a href="#">&laquo;</a>
-                    </li>
-                    <li class="active">
-                        <a href="#">1</a>
-                    </li>
-                    <li>
-                        <a href="#">2</a>
-                    </li>
-                    <li>
-                        <a href="#">3</a>
-                    </li>
-                    <li>
-                        <a href="#">4</a>
-                    </li>
-                    <li>
-                        <a href="#">5</a>
-                    </li>
-                    <li>
-                        <a href="#">&raquo;</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        /.row
- -->
-
-       <!--  <hr> -->
-<!-- 
-
-        <!~~ Footer ~~>
-        <footer>
-            <div class="row">
-                <div class="col-lg-12">
-                    <p>Copyright &copy; Your Website 2014</p>
-                </div>
-            </div>
-            <!~~ /.row ~~>
-        </footer>
- -->
-
+    	<hr>
+    
+		<nav class="navbar navbar-default text-center navbar-fixed-bottom " id="page-selection">
+	
+		</nav>
 
     </div>
+    
+    
+    
+    
+    
+    <!-- Footer -->
+        <footer>
+            
+        </footer>
     <!-- /.container -->
 
 </body>
