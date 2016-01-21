@@ -51,21 +51,29 @@ Members.prototype.getAll = function(callback){
 };
 
 Members.prototype.filterByCategory = function(category) {
-	var filter = [];
+
+	var _this = this;
+
+	if (category === "All") {
+		_this.showAll();
+	}
+	else {
+		var filter = [];
 			
-	$.each(this.objs, function(i, obj) {
-		if (obj.category === category) {
-			filter.push(obj);
-		}
-	});
-	
-	return filter;
+		$.each(_this.objs, function(i, obj) {
+			if (obj.category === category) {
+				filter.push(obj);
+			}
+		});
+		
+		_this.show(filter);
+	}
 };
 
 Members.prototype.filterByText = function(txt) {
-	var filtered = searchFor(txt, this.objs);
+	var filter = searchFor(txt, this.objs);
 	
-	return filtered;
+	this.show(filter);
 };
 
 Members.prototype.createDiv = function(div_id, img, member) {

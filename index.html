@@ -21,6 +21,7 @@
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/js/jquery.bootpag.js"></script>
     <script type="text/javascript" src="/js/ibc.members.js"></script>
+    <script type="text/javascript" src="/js/ibc.category.js"></script>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -52,10 +53,8 @@
     <script type="text/javascript">
     
 	    var members = new Members("members-container", "page-selection", 12);
-     
-	    categories = []
 	    
-	    categories_id_mapping = {}
+	    var categories = new Categories("categories-dropdown", "category-text", members.filterByCategory.bind(members));
 	    
 	    function trimString(s) {
 		  var l=0, r=s.length -1;
@@ -120,9 +119,7 @@
 			$("#navbar-search-input").bind("keyup input paste", function() {
 				var txt = $("#navbar-search-input").val();
 				
-				var filter = members.filterByText(txt);
-				
-				members.show(filter);
+				members.filterByText(txt);
 			});
 			
 			$("#navbar-search-input").change(function() {
@@ -130,66 +127,6 @@
 			});	
 		};
 		
-		function getAllCategories() {
-			$.get("/categories")
-				.done(function(string) {
-
-					var json = string;
-
-					$.each(json, function(i, obj) {
-					
-						categories.push(obj.category);
-					});
-					
-					fillCategories();
-					
-			});
-		};
-		
-		function fillCategories() {
-			
-			categories.push("General");
-		
-			categories.sort();
-			
-			categories.unshift("All");
-		
-			$.each(categories, function(i, obj) {
-			
-				var id = createRandomDivId();
-						
-				categories_id_mapping[id] = obj;
-				
-				$("#categories-dropdown").append("<li><a href=\"#\" id=" + id + ">" + obj + "</a></li>");
-				
-				if (obj === "All") {
-					$("#categories-dropdown").append("<li role=\"separator\" class=\"divider\"></li>");
-				
-				}
-				
-				$( jq( id )).click(categoryClicked);
-				
-			});
-		};
-		
-		function categoryClicked(event) {
-			event.preventDefault();
-			
-			var cat_id = $(this).attr('id');
-			
-			var cat = categories_id_mapping[cat_id];
-			
-			$("#category-text").html(cat +' <span class="caret"></span>');
-			
-			if (cat === "All") {
-				members.showAll();
-			}
-			else {
-				var filter = members.filterByCategory(cat);
-				members.show(filter);
-			}
-		};
-	    
 	    function hookLogout() {
 	    
 	    	$("#logout-btn").click(function() {
@@ -206,15 +143,15 @@
 				 	});
 			});
 	    };
-		
+	    
 	    //entry hook
 		$(document).ready(function() {
 		
 			hookNavbarSearch();
 			
-			getAllCategories();			
-			
-			members.init();
+			categories.getAll(function() {
+				categories.fill();
+			});
 			
 			members.getAll(function() {
 				members.showAll();
