@@ -10,7 +10,8 @@ var Members = function (container_name, page_selection, members_per_page){
 	this.filter_objs = [];
 	
 	this.in_filter_mode = false;
-
+	
+	this.div_id_to_member_mapping = {};
 };
 
 
@@ -164,6 +165,7 @@ Members.prototype.doShow = function(objs_to_show){
 			
 			//create member div
 			var div_id = createRandomDivId();
+			_this.div_id_to_member_mapping[div_id] = curr_member;
 			var div = _this.createDiv(div_id, "img/profile_img.png", curr_member);
 			
 			//add to row										
@@ -178,6 +180,15 @@ Members.prototype.doShow = function(objs_to_show){
 			  $(this).siblings().stop().fadeTo(300, 1);
 			  $(this).parent().siblings().stop().fadeTo(300, 1);
 			  $(this).toggleClass('rotated');
+			});
+			
+			//click on member
+			$(jq(div_id)).click(function(event) {
+				var member = _this.div_id_to_member_mapping[this.id];
+				
+				$(jq("modal-member-name")).text(member.last_name_english + " " + member.first_name_english);
+				
+				$(jq("moreInfoModal")).modal();
 			});
 		}
 	}
