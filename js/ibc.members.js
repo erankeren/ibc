@@ -1,18 +1,18 @@
 var Members = function (container_name, page_selection, members_per_page){
 
-	this.objs = [];
+	this.all_objs = [];
 	this.container_name = container_name;
 	this.page_selection = page_selection;
 	this.members_per_page = members_per_page;
 	
 	this.max_pages = 0;
+	
+	this.filter_objs = [];
+	
+	this.in_filter_mode = false;
 
 };
 
-Members.prototype.init = function(callback){
-
-	var _this = this;
-}
 
 Members.prototype.getAll = function(callback){
 	var _this = this;
@@ -28,23 +28,9 @@ Members.prototype.getAll = function(callback){
 					obj.category = "General";
 				}
 			
-				_this.objs.push(obj);
+				_this.all_objs.push(obj);
 			
 			});
-			
-			if (_this.objs.length % _this.members_per_page == 0) {
-				_this.max_pages = _this.objs.length / _this.members_per_page;
-			}
-			else {
-				_this.max_pages = _this.objs.length / _this.members_per_page + 1;
-			}
-			
-			//init paging
-			$(jq(_this.page_selection)).bootpag({
-					total: _this.max_pages
-				}).on("page", function(event, /* page number here */ num){
-					 _this.showAllByPage(num);
-				});
 			
 			callback();
 	});
@@ -55,25 +41,32 @@ Members.prototype.filterByCategory = function(category) {
 	var _this = this;
 
 	if (category === "All") {
-		_this.showAll();
+		_this.in_filter_mode = false;
 	}
 	else {
-		var filter = [];
+		_this.in_filter_mode = true;
+	
+		_this.filter_objs = [];
 			
-		$.each(_this.objs, function(i, obj) {
+		$.each(_this.all_objs, function(i, obj) {
 			if (obj.category === category) {
-				filter.push(obj);
+				_this.filter_objs.push(obj);
 			}
 		});
-		
-		_this.show(filter);
 	}
+	
+	_this.show();
 };
 
 Members.prototype.filterByText = function(txt) {
-	var filter = searchFor(txt, this.objs);
+
+	var _this = this;
 	
-	this.show(filter);
+	_this.in_filter_mode = true;
+	
+	_this.filter_objs = searchFor(txt, this.all_objs);
+	
+	_this.show();
 };
 
 Members.prototype.createDiv = function(div_id, img, member) {
@@ -88,16 +81,39 @@ Members.prototype.createDiv = function(div_id, img, member) {
 	return item;           				       	
 };
 
-Members.prototype.showAll = function(){
-	this.show(this.objs);
-};
 
-Members.prototype.showAllByPage = function(page){
-	this.showByPage(this.objs, page);
-};
+Members.prototype.show = function(){
 
-Members.prototype.show = function(objs_to_show){
-	this.showByPage(objs_to_show, 1);
+	var _this = this;
+
+	var objs_to_show;
+	
+	if (this.in_filter_mode) {
+		objs_to_show = _this.filter_objs;
+	}
+	else {
+		objs_to_show = _this.all_objs;
+	}
+	
+	if (objs_to_show.length <= _this.members_per_page) {
+		_this.max_pages = 1;
+	}
+	else if (objs_to_show.length % _this.members_per_page == 0) {
+		_this.max_pages = objs_to_show.length / _this.members_per_page;
+	}
+	else {
+		_this.max_pages = objs_to_show.length / _this.members_per_page + 1;
+	}
+	
+	//paging
+	$(jq(_this.page_selection)).bootpag({
+			total: _this.max_pages
+		}).on("page", function(event, num){
+			_this.showByPage(objs_to_show, num);
+		});
+		
+	_this.showByPage(objs_to_show, 1);
+	
 };
 
 Members.prototype.showByPage = function(objs_to_show, page){
