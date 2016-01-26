@@ -62,7 +62,7 @@ class IbcMembersWebService(object):
 			con.row_factory = dict_factory
 			con.text_factory = str
 			cur = con.cursor()
-			cur.execute("SELECT first_name_english,last_name_english,email,company,position,tags,category FROM members ORDER BY last_name_english")
+			cur.execute("SELECT first_name_english,last_name_english,email,company,position,tags,category,phone,webpage FROM members ORDER BY last_name_english")
 			results = cur.fetchall()
 			return json.dumps(results, ensure_ascii=False)
 			
@@ -104,6 +104,9 @@ if __name__ == '__main__':
      conf = {
          '/': {
              'tools.sessions.on': True,
+             'tools.sessions.storage_type': 'file',
+             'tools.sessions.storage_path': './sessions',
+             'tools.sessions.timeout': 180,
              'tools.staticdir.root': os.path.abspath(os.getcwd())
          },
          '/logout': {

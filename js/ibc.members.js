@@ -77,6 +77,7 @@ Members.prototype.createDiv = function(div_id, img, member) {
 						<!-- <p>" + member.category + "</p> -->\
 						<h6><span class=\"member-text\">" + member.company + "</span></h6> \
 						<h6><span class=\"member-text\">" + member.position + "</span></h6> \
+						<h9><span style=\"font-size:smaller; color:darkolivegreen; font-weight:200;\">" + member.category + "</span></h9> \
 					</div>"
 		
 	return item;           				       	
@@ -186,9 +187,37 @@ Members.prototype.doShow = function(objs_to_show){
 			$(jq(div_id)).click(function(event) {
 				var member = _this.div_id_to_member_mapping[this.id];
 				
-				$(jq("modal-member-name")).text(member.last_name_english + " " + member.first_name_english);
+				var head = "";
+				head += "<button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>"
+				head += "<h3 style=\"text-align:center; padding-bottom:20px;\"><span class=\"label label-primary\">" + member.category + "</span></h3>";
+				head += "<h4 class=\"member-name modal-title\">" + member.last_name_english + " " + member.first_name_english + "</h4>";
+				head += "<h6><span class=\"member-text\">" + member.company + "</span></h6>";
+				head += "<h6><span class=\"member-text\">" + member.position + "</span></h6>";
 				
-				$(jq("moreInfoModal")).modal();
+				var body = "";
+				body += "<h6><span>" + member.email + "</span></h6>";
+				body += "<h6><span>" + member.phone + "</span></h6>";
+				
+				var webpage = member.webpage.replace(/(?:\r\n|\r|\n)/g, ',');				
+ 				var str_array = webpage.split(',');
+ 				for(var i = 0; i < str_array.length; i++) {
+ 					// Trim the excess whitespace.
+ 					str_array[i] = str_array[i].replace(/^\s*/, "").replace(/\s*$/, "");
+ 					body += "<h6><a href=\"#\"\">" + str_array[i] + "</a></h6>";
+ 				}
+ 				
+ 				
+ 				var footer = "";
+ 				footer += "<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"
+				
+				$(jq("member-modal-header")).html(head);
+				$(jq("member-modal-body")).html(body);
+				$(jq("member-modal-footer")).html(footer);
+				
+				
+				$(jq("moreInfoModal")).modal().on('hidden.bs.modal', function () {
+					// do something…
+				});
 			});
 		}
 	}
