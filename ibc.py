@@ -5,6 +5,7 @@ import sqlite3
 import time
 import cherrypy
 import json
+import re
 
 from string import digits
 
@@ -31,6 +32,17 @@ class IbcLoginWebService(object):
 	@cherrypy.tools.json_in()
 	def POST(self):
 		data = cherrypy.request.json
+		
+		#check user is valid email address
+		pattern = re.compile("(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
+		if not pattern.match(data['user']):
+			print "bad user"
+			return json.dumps({'result': 'failed'}, ensure_ascii=False)
+
+		if not data['password'].isdigit():
+			print "bad password"		
+			return json.dumps({'result': 'failed'}, ensure_ascii=False)
+			
 		with sqlite3.connect(DB_STRING) as con:
 			cur = con.cursor()
 			str = "SELECT * FROM login WHERE email=\"{}\" AND password=\"{}\"".format(data['user'], data['password'])
@@ -40,7 +52,7 @@ class IbcLoginWebService(object):
 			print results;
 			
 			if results and results[0]:
-				cherrypy.session['user'] = 'a@a.com';
+				cherrypy.session['user'] = data['user']
 				return json.dumps({'result': 'ok'}, ensure_ascii=False)
 			else:
 				return json.dumps({'result': 'failed'}, ensure_ascii=False)
