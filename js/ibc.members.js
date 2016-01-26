@@ -191,6 +191,7 @@ Members.prototype.doShow = function(objs_to_show){
 				head += "<button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>"
 				head += "<h3 style=\"text-align:center; padding-bottom:20px;\"><span class=\"label label-primary\">" + member.category + "</span></h3>";
 				head += "<h4 class=\"member-name modal-title\">" + member.last_name_english + " " + member.first_name_english + "</h4>";
+				head += "<h4 class=\"member-name modal-title\">" + member.last_name_hebrew + " " + member.first_name_hebrew + "</h4>";
 				head += "<h6><span class=\"member-text\">" + member.company + "</span></h6>";
 				head += "<h6><span class=\"member-text\">" + member.position + "</span></h6>";
 				
