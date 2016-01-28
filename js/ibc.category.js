@@ -9,7 +9,11 @@ var Categories = function (container_name, category_text_id, change_callback){
 
 };
 
-Categories.prototype.getAll = function(callback){
+Categories.prototype.getAll = function(){
+	return this.categories;
+};
+
+Categories.prototype.fetchFromServer = function(callback){
 	
 	var _this = this;
 

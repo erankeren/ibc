@@ -14,8 +14,12 @@ var Members = function (container_name, page_selection, members_per_page){
 	this.div_id_to_member_mapping = {};
 };
 
+Members.prototype.getAll = function(){
+	return this.all_objs;
+};
 
-Members.prototype.getAll = function(callback){
+
+Members.prototype.fetchFromServer = function(callback){
 	var _this = this;
 	
     $.get("/members")

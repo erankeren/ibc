@@ -26,6 +26,11 @@ class IbcWebMain(object):
     		return open('login.html')
     	return open('index.html')
     	
+class IbcWebAdmin(object):
+    @cherrypy.expose
+    def index(self):
+    	return open('admin.html')
+    	
 class IbcLoginWebService(object):
 	exposed = True
 	
@@ -74,9 +79,10 @@ class IbcMembersWebService(object):
 			con.row_factory = dict_factory
 			con.text_factory = str
 			cur = con.cursor()
-			cur.execute("SELECT * FROM members ORDER BY last_name_english")
+			cur.execute("SELECT last_name_english, first_name_english, last_name_hebrew, first_name_hebrew, email, phone, company, position, category, tags, webpage FROM members ORDER BY last_name_english")
 			results = cur.fetchall()
-			return json.dumps(results, ensure_ascii=False)
+			#print json.dumps(results, ensure_ascii=False)
+			return json.dumps(results, ensure_ascii=False, sort_keys=True)
 			
 class IbcCategoryWebService(object):
 	exposed = True
@@ -121,6 +127,9 @@ if __name__ == '__main__':
              'tools.sessions.timeout': 180,
              'tools.staticdir.root': os.path.abspath(os.getcwd())
          },
+         '/admin': {
+             'tools.staticdir.root': os.path.abspath(os.getcwd())
+         },
          '/logout': {
              'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
              'tools.response_headers.on': True,
@@ -162,6 +171,7 @@ if __name__ == '__main__':
      cherrypy.engine.subscribe('start', setup_database)
      
      webapp = IbcWebMain()
+     webapp.admin = IbcWebAdmin()
      webapp.login = IbcLoginWebService()
      webapp.logout = IbcLogoutWebService()
      webapp.members = IbcMembersWebService()

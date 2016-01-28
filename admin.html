@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>IBC Directory</title>
+    
+    <!-- Bootstrap Core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+	<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../js/mindmup-editabletable.js"></script>
+    <script type="text/javascript" src="../js/ibc.util.js"></script>
+    <script type="text/javascript" src="../js/ibc.members.js"></script>
+    <script type="text/javascript" src="../js/ibc.category.js"></script>
+    
+    
+    <script type="text/javascript">
+    	
+    	var members = new Members("members-container", "page-selection", 12);
+    	
+    	var categories = new Categories("categories-dropdown", "category-text", members.filterByCategory.bind(members));
+    	
+    	var members_fetched_from_server;
+    	
+    	var categories_fetched_from_server;
+    	
+    	var row_mapper = [];
+    	
+    	function createSelection(id ,value) {
+    	
+    		var html = "<select id=\"" + id + "\"style=\"width:125px; font-size:xx-small;\">";
+    		
+    		html += "<option value=\"" + value + "\">" + value + "</option>";
+    		
+    		$.each(categories_fetched_from_server, function(i, obj) {
+    			if (obj != value) {
+    				html += "<option value=\"" + obj + "\">" + obj + "</option>";
+    			}
+    			
+    		});
+    		
+    		html+= "</select>";
+    		
+    		return html;
+    	};
+    	
+    	function onSelectionChange() {
+    		updateOnChange($(this).parent(), $(this).val());
+    		//console.log($(this).val());
+    		//$(this).parent().text($(this).val());
+    		//$(this).
+    	};
+    	
+    	function buildTabelCols() {
+    		var cols = "<thead><tr>";
+				
+			$.each(members_fetched_from_server[0], function(name, value) {
+				cols += "<th>" + name + "</th>";
+			});
+			
+			cols += "<th>" + "action" + "</th>";
+			
+			cols += "</tr></thead>";
+			
+			$(jq("mainTable")).append(cols);
+    	};
+    	
+    	function buildTableRows() {
+    		selection_id_to_bind = [];
+    		btn_id_to_bind = [];
+    		
+			$.each(members_fetched_from_server, function(i, obj) {
+				var row_id = createRandomDivId();
+				
+				//map row id to member
+				row_mapper[row_id] = obj;
+				
+				
+				
+				var tr = "<tr id=\"" + row_id + "\">";
+				
+				$.each(obj, function(name, value) {
+					
+					tr += "<td>";
+						
+					if (name === "category") {
+						var selection_id = createRandomDivId();
+						selection_id_to_bind.push(selection_id);
+						
+						tr += createSelection(selection_id, value);
+					}
+					else {
+						tr += value;
+					}
+					
+					tr += "</td>";
+				
+				});
+				
+				//create the update btn
+				var btn_id = createRandomDivId();
+				btn_id_to_bind.push(btn_id);
+				tr += "<td><button id=\"" + btn_id + "\" type=\"button\" class=\"btn btn-default btn-xs\" disabled>Update</button></td>";
+				
+				tr += "</tr>"
+			
+				$(jq("mainTable-body")).append(tr);
+				
+				
+			});
+			
+			//bind combobox
+			$.each(selection_id_to_bind, function(i, obj) {
+				$(jq(obj)).on('change', onSelectionChange);
+			});
+    	};
+    	
+    	function buildTable() {
+    	
+			buildTabelCols();
+			
+			buildTableRows();
+			
+			$('#mainTable').editableTableWidget();
+		
+			$('#mainTable').editableTableWidget({editor: $('<textarea>')});
+		
+			$('#mainTable').editableTableWidget({
+				cloneProperties: ['background', 'border', 'outline']
+			});
+		
+			$('table td').on('validate', function(evt, newValue) {
+				// if (....) { 
+// 					return false; // mark cell as invalid 
+// 				}
+			});
+		
+			$('table td').on('change', function(evt, newValue) {
+			
+				updateOnChange(this, newValue);
+			
+				
+				
+			});
+		};
+		
+		function updateOnChange(triggeredObject, newVal) {
+			if (newVal == "" || newVal == undefined) {
+				return;
+			}
+			
+			//get the parent row
+			var parent_row = $(triggeredObject).parent();
+			
+			//get the col header
+			var col_header = $('#mainTable th').eq($(triggeredObject).index());
+			
+			//get the member object based on row id
+			var member = row_mapper[$(parent_row).attr("id")];
+			
+			//update the member object with new value
+			member[col_header.text()] = newVal;
+			
+			//member.need_update = true;
+			
+			//color the change in red
+			$(triggeredObject).css('color', 'red');
+			
+			//enable update button on change
+			$(parent_row).find("button").prop("disabled", false);
+		};
+    	
+    	
+    	$(document).ready(function() {
+    	
+			members.fetchFromServer(function() {
+			
+				members_fetched_from_server = members.getAll();
+			
+				categories.fetchFromServer(function() {
+				
+					categories_fetched_from_server = categories.getAll();
+				
+					buildTable();
+					
+				});
+    		});
+    	
+		});
+
+    	
+    	
+    </script>
+
+
+
+</head>
+
+<body>
+
+<div>
+	
+	<table id="mainTable" class="table table-striped" style="font-size:smaller;">
+<!-- 		<thead><tr><th>Last Name</th><th>First Name</th><th>Email</th><th>Phone</th><th>Company</th><th>Position</th><th>Category</th><th>Webpage</th><th>Action</th></tr></thead> -->
+		<tbody id="mainTable-body">
+		</tbody>
+<!-- 		<tfoot><tr><th><strong>TOTAL</strong></th><th></th><th></th><th></th></tr></thead> -->
+	  </table>
+    
+</div>
+
+</body>
+
