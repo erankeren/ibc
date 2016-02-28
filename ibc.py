@@ -83,6 +83,14 @@ class IbcMembersWebService(object):
 			results = cur.fetchall()
 			#print json.dumps(results, ensure_ascii=False)
 			return json.dumps(results, ensure_ascii=False, sort_keys=True)
+	
+	@cherrypy.tools.json_in()		
+	def POST(self):
+		with sqlite3.connect(DB_STRING) as con:
+			data = cherrypy.request.json
+			print data
+			print data['category']
+			
 			
 class IbcCategoryWebService(object):
 	exposed = True
