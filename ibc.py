@@ -79,7 +79,7 @@ class IbcMembersWebService(object):
 			con.row_factory = dict_factory
 			con.text_factory = str
 			cur = con.cursor()
-			cur.execute("SELECT last_name_english, first_name_english, last_name_hebrew, first_name_hebrew, email, phone, company, position, category, tags, webpage FROM members ORDER BY last_name_english")
+			cur.execute("SELECT last_name_english, first_name_english, last_name_hebrew, first_name_hebrew, email, phone, company, position, category, tags, webpage, picurl FROM members ORDER BY last_name_english")
 			results = cur.fetchall()
 			#print json.dumps(results, ensure_ascii=False)
 			return json.dumps(results, ensure_ascii=False, sort_keys=True)
@@ -111,7 +111,7 @@ def randomword(length):
                
 def setup_database():
      with sqlite3.connect(DB_STRING) as con:
-         con.execute("CREATE TABLE IF NOT EXISTS members (last_name_hebrew TEXT, first_name_hebrew TEXT, last_name_english TEXT, first_name_english TEXT, email TEXT, phone TEXT, company TEXT, position TEXT, category TEXT, tags TEXT, webpage TEXT)")
+         con.execute("CREATE TABLE IF NOT EXISTS members (last_name_hebrew TEXT, first_name_hebrew TEXT, last_name_english TEXT, first_name_english TEXT, email TEXT, phone TEXT, company TEXT, position TEXT, category TEXT, tags TEXT, webpage TEXT, picurl TEXT)")
          con.execute("CREATE TABLE IF NOT EXISTS login (email TEXT, password TEXT)")
          
          #making all emails lower case

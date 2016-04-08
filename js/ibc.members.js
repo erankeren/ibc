@@ -74,9 +74,9 @@ Members.prototype.filterByText = function(txt) {
 	_this.show();
 };
 
-Members.prototype.createDiv = function(div_id, img, member) {
+Members.prototype.createDiv = function(div_id, member) {
 	var item = "	<div id =" + div_id + " class=\"col-md-4 portfolio-item\"> \
-						<img class=\"imgBorder pull-left img-responsive member-pic\" src=\"" + img + "\" alt=\"\"> \
+						<img class=\"imgBorder pull-left img-responsive member-pic\" src=\"" + member.picurl + "\" alt=\"\"> \
 						<h5><span class=\"member-name\">" + member.last_name_english + " " + member.first_name_english + "</span></h5> \
 						<!-- <p>" + member.category + "</p> -->\
 						<h6><span class=\"member-text\">" + member.company + "</span></h6> \
@@ -171,7 +171,7 @@ Members.prototype.doShow = function(objs_to_show){
 			//create member div
 			var div_id = createRandomDivId();
 			_this.div_id_to_member_mapping[div_id] = curr_member;
-			var div = _this.createDiv(div_id, "img/profile_img.png", curr_member);
+			var div = _this.createDiv(div_id, curr_member);
 			
 			//add to row										
 			$(jq(row_id)).append(div);
