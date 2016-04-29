@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>IBC Directory</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/3-col-portfolio.css" rel="stylesheet">
+    
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    
+    <script type="text/javascript" src="/js/jquery.bootpag.js"></script>
+    <script type="text/javascript" src="/js/ibc.util.js"></script>
+    <script type="text/javascript" src="/js/ibc.members.js"></script>
+    <script type="text/javascript" src="/js/ibc.category.js"></script>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+	<!-- Modal -->
+	<div id="moreInfoModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header" id="member-modal-header">
+				
+				</div>
+				<div class="modal-body" id="member-modal-body">
+				
+				</div>
+				<div class="modal-footer" id="member-modal-footer">
+			
+				</div>
+			</div>
+		</div>
+	</div>
+    
+    <script type="text/javascript">
+    
+	    var members = new Members("members-container", "page-selection", 12);
+	    
+	    var categories = new Categories("categories-dropdown", "category-text", members.filterByCategory.bind(members));
+		
+		function hookNavbarSearch() {
+			$( "#navbar-search-form" ).submit(function( event ) {
+			
+				event.preventDefault();				
+			});
+			
+			$("#navbar-search-input").bind("keyup input paste", function() {
+				var txt = $("#navbar-search-input").val();
+				
+				members.filterByText(txt);
+			});
+			
+			$("#navbar-search-input").change(function() {
+				
+			});	
+		};
+		
+	    function hookLogout() {
+	    
+	    	$("#logout-btn").click(function() {
+			
+				var posting = $.ajax({
+					'type'        : 'POST',
+					'dataType'    : 'JSON',
+					'contentType' : 'application/json',
+					'url'         : '/logout',
+					'data'        : JSON.stringify({})
+				 })
+				 	.always(function() {
+				 		location.reload();
+				 	});
+			});
+	    };
+	    
+	    //entry hook
+		$(document).ready(function() {
+		
+			hookNavbarSearch();
+			
+			categories.fetchFromServer(function() {
+				categories.fill();
+			});
+			
+			members.fetchFromServer(function() {
+				members.show();
+			});
+			
+			hookLogout();
+
+       });
+     </script>
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a href="#" class="pull-left"><img style="max-width:100px; margin-top: 7px;" src="/img/ibc-logo.png"></a>
+		</div>
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav" id="navbar-list">
+				<li class="active dropdown">
+				  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="category-text">All <span class="caret"></span></a>
+				  <ul class="dropdown-menu" id="categories-dropdown">
+					
+				  </ul>
+				</li>			
+			</ul>
+			
+			
+			<div class="col-sm-3 col-md-3 pull-right">
+				<form class="navbar-form" role="search" id="navbar-search-form">
+					
+					<div class="input-group">
+						<input type="text" class="form-control" placeholder="Search" id="navbar-search-input">
+						<div class="input-group-btn">
+							<button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+						</div>
+					</div>
+					
+					<div class="input-group">
+						<div class="input-group-btn">
+							<button class="btn btn-default" type="submit" id="logout-btn"><i class="glyphicon glyphicon-log-out"></i></button>
+						</div>
+					</div>
+					
+				</form>
+				
+			</div>
+			    
+		</div>
+	</nav>
+    
+    
+    <!-- Page Content -->
+    <div class="container" id="rows-container">
+    
+    	
+
+    	<div id="members-container">
+    	
+    	</div>
+    	
+    	<hr>
+    
+		<nav class="navbar navbar-default text-center navbar-fixed-bottom " id="page-selection">
+	
+		</nav>
+
+    </div>
+    
+    
+    
+    
+    
+    <!-- Footer -->
+        <footer>
+            
+        </footer>
+    <!-- /.container -->
+
+</body>
+
+</html>
