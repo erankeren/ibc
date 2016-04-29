@@ -10,3 +10,11 @@ Building blocks:
 
 3. Database - sqlite3 (https://www.sqlite.org/)
     ...As said it was a small project :-)...
+
+
+Other things I've used:
+
+1. AWS EC2 Instance - as the hosting server
+2. AWS S3 - for storing images
+3. AWS Route 53 - to register the domain name
+4. CloudFront - as the ssl frontend
