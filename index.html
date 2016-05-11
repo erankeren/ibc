@@ -76,7 +76,7 @@
 		
 	    function hookLogout() {
 	    
-	    	$("#logout-btn").click(function() {
+	    	$("#logout-link").click(function() {
 			
 				var posting = $.ajax({
 					'type'        : 'POST',
@@ -105,15 +105,48 @@
 			});
 			
 			hookLogout();
-
+            
+            //fixes the active tab css
+            $(".nav a").on("click", function(){
+               $(".nav").find(".active").removeClass("active");
+               $(this).parent().addClass("active");
+            });
+            
+            //hide the directory tab so only home is shown on startup
+            $('#directory-tab-container').hide();
+            
+            //click on directory tab -> hide home and show directory
+            $('#myTabs a[href="#directory"]').click(function (e) {
+              e.preventDefault()
+              $('#home-tab-container').hide();
+              $('#directory-tab-container').show();
+            });
+            
+            //click on home tab -> hide directory and show home
+            $('#myTabs a[href="#home"]').click(function (e) {
+              e.preventDefault()
+              $('#home-tab-container').show();
+              $('#directory-tab-container').hide();
+            });
+            
        });
      </script>
 
 </head>
 
 <body>
-
+    
+    <nav role="navigation" id="myTabs">
+        <ul class="nav nav-tabs" style="top:0;right:0;left:0;position:absolute;">
+            <li role="presentation"><img style="max-width:100px; margin-top: 7px;" src="img/logo-new.png"></li>
+            <li role="presentation" class="active"><a href="#home">Home</a></li>
+            <li role="presentation"><a href="#directory">Directory</a></li>
+            <li role="presentation" id="logout-link" class="pull-right"><a href="#">Logout</a></li>
+        </ul>
+    </nav>
+    
     <!-- Navigation -->
+<!--
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -126,6 +159,7 @@
 		</div>
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav" id="navbar-list">
+                <li><a href="#">Link</a></li>
 				<li class="active dropdown">
 				  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="category-text">All <span class="caret"></span></a>
 				  <ul class="dropdown-menu" id="categories-dropdown">
@@ -135,57 +169,245 @@
 			</ul>
 			
 			
-			<div class="col-sm-3 col-md-3 pull-right">
-				<form class="navbar-form" role="search" id="navbar-search-form">
-					
-					<div class="input-group">
-						<input type="text" class="form-control" placeholder="Search" id="navbar-search-input">
-						<div class="input-group-btn">
-							<button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
-						</div>
-					</div>
-					
-					<div class="input-group">
-						<div class="input-group-btn">
-							<button class="btn btn-default" type="submit" id="logout-btn"><i class="glyphicon glyphicon-log-out"></i></button>
-						</div>
-					</div>
-					
-				</form>
-				
-			</div>
+            <div class="col-sm-3 col-md-3 pull-right">
+                <form class="navbar-form" role="search" id="navbar-search-form">
+
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" id="navbar-search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
 			    
 		</div>
 	</nav>
+-->
     
     
-    <!-- Page Content -->
-    <div class="container" id="rows-container">
-    
-    	
+    <!-- Tabs Content -->
+    <div class="container text-center" id="home-tab-container">
+        
+        <div>
+          <h1>Board Members</h1>
+        </div>
+        
+        <div class="row">
+            <!--Padder-->
+            <div class="col-md-4">
+            </div>
+            <!---->
+            
+            <div class="col-md-4">
+                <div class="thumbnail">
+                    <img class="member-pic" src="https://s3-eu-west-1.amazonaws.com/ibclondon/Liora_th.jpg" alt="...">
+                    <div class="caption">
+                        <h3>Liora Torn-Hibler</h3>
+                        <p class="lead">IBC Chairperson</p>
+                        <p>Solicitor</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!--Padder-->
+            <div class="col-md-4">
+            </div>
+            <!---->
 
-    	<div id="members-container">
-    	
-    	</div>
-    	
-    	<hr>
-    
-		<nav class="navbar navbar-default text-center navbar-fixed-bottom " id="page-selection">
-	
-		</nav>
+        </div>
 
+        <div class="row">
+            <!--Padder-->
+            <div class="col-md-4">
+            </div>
+            <!---->
+            
+            <div class="col-sm-6 col-md-4">
+                <div class="thumbnail">
+                    <img class="member-pic" src="https://s3-eu-west-1.amazonaws.com/ibclondon/Moshiel_Biton.jpg" alt="...">
+                    <div class="caption">
+                        <h3>Moshiel Biton</h3>
+                        <p class="lead">IBC Board Member</p>
+                        <p>PhD Research Student, Imperial College</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!--Padder-->
+            <div class="col-md-4">
+            </div>
+            <!---->
+            
+        </div>
+        
+        <div class="row">  
+            <!--Padder-->
+            <div class="col-md-4">
+            </div>
+            <!---->
+            
+            <div class="col-sm-6 col-md-4">
+                <div class="thumbnail">
+                    <img class="member-pic" src="https://s3-eu-west-1.amazonaws.com/ibclondon/Tamar+Shafir.jpg" alt="...">
+                    <div class="caption">
+                        <h3>Tamar Shafir</h3>
+                        <p class="lead">IBC Board Member</p>
+                        <p>Northern Europe Representative, ICL Innovation Ltd</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!--Padder-->
+            <div class="col-md-4">
+            </div>
+            <!---->
+            
+        </div>
+            
+            <div class="row">
+                <!--Padder-->
+                <div class="col-md-4">
+                </div>
+                <!---->
+
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail">
+                        <img class="member-pic" src="https://s3-eu-west-1.amazonaws.com/ibclondon/Veronica_Lilevman.jpg" alt="...">
+                        <div class="caption">
+                            <h3>Veronica Lilevman</h3>
+                            <p class="lead">IBC Board Member</p>
+                            <p>Senior International Tax Advisor, Deloitte</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!--Padder-->
+                <div class="col-md-4">
+                </div>
+                <!---->
+
+            </div>
+            
+        
+            <div class="row">
+                
+                <!--Padder-->
+                <div class="col-md-4">
+                </div>
+                <!---->
+
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail">
+                        <img class="member-pic" src="https://s3-eu-west-1.amazonaws.com/ibclondon/profile_img.png" alt="...">
+                        <div class="caption">
+                            <h3>Sharon Buenos</h3>
+                            <p class="lead">IBC Board Member</p>
+                            <p>Israeli House</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!--Padder-->
+                <div class="col-md-4">
+                </div>
+                <!---->
+                
+            </div>
+        
+            <hr>
+        
+            <div>
+              <h1>Team</h1>
+            </div>
+        
+            <div class="row">   
+                <!--Padder-->
+                <div class="col-md-4">
+                </div>
+                <!---->
+
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail">
+                        <img class="member-pic" src="https://s3-eu-west-1.amazonaws.com/ibclondon/profile_img.png" alt="...">
+                        <div class="caption">
+                            <h3>Sigal Spirman</h3>
+                            <p class="lead">IBC Office Manager</p>
+                            <p>MA Student, UCL</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!--Padder-->
+                <div class="col-md-4">
+                </div>
+                <!---->
+                
+            </div>
+        
+            <div class="row">   
+                <!--Padder-->
+                <div class="col-md-4">
+                </div>
+                <!---->
+
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail">
+                        <img class="member-pic" src="https://s3-eu-west-1.amazonaws.com/ibclondon/eran_keren_2.jpg" alt="...">
+                        <div class="caption">
+                            <h3>Eran Keren</h3>
+                            <p class="lead">Web Manager</p>
+                            <p>Principal Software Enigneer, Mimecast</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Padder-->
+                <div class="col-md-4">
+                </div>
+                <!---->
+
+            </div>
+        
+            <div class="row">   
+                <!--Padder-->
+                <div class="col-md-4">
+                </div>
+                <!---->
+
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail">
+                        <img class="member-pic" src="https://s3-eu-west-1.amazonaws.com/ibclondon/profile_img.png" alt="...">
+                        <div class="caption">
+                            <h3>Raya Cottrell</h3>
+                            <p class="lead">Photography</p>
+                            <p></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Padder-->
+                <div class="col-md-4">
+                </div>
+                <!---->
+
+            </div>
+        
     </div>
     
+    <div class="container" id="directory-tab-container">
+        <div id="members-container">
+    	
+    	</div>
+    </div>
     
+    <hr>
     
-    
-    
-    <!-- Footer -->
-        <footer>
-            
-        </footer>
-    <!-- /.container -->
-
+    <footer>
+        
+    </footer>
 </body>
 
 </html>

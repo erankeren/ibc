@@ -100,25 +100,27 @@ Members.prototype.show = function(){
 	else {
 		objs_to_show = _this.all_objs;
 	}
+    
+    _this.doShow(objs_to_show);
 	
-	if (objs_to_show.length <= _this.members_per_page) {
-		_this.max_pages = 1;
-	}
-	else if (objs_to_show.length % _this.members_per_page == 0) {
-		_this.max_pages = objs_to_show.length / _this.members_per_page;
-	}
-	else {
-		_this.max_pages = objs_to_show.length / _this.members_per_page + 1;
-	}
-	
-	//paging
-	$(jq(_this.page_selection)).bootpag({
-			total: _this.max_pages
-		}).on("page", function(event, num){
-			_this.showByPage(objs_to_show, num);
-		});
-		
-	_this.showByPage(objs_to_show, 1);
+//	if (objs_to_show.length <= _this.members_per_page) {
+//		_this.max_pages = 1;
+//	}
+//	else if (objs_to_show.length % _this.members_per_page == 0) {
+//		_this.max_pages = objs_to_show.length / _this.members_per_page;
+//	}
+//	else {
+//		_this.max_pages = objs_to_show.length / _this.members_per_page + 1;
+//	}
+//	
+//	//paging
+//	$(jq(_this.page_selection)).bootpag({
+//			total: _this.max_pages
+//		}).on("page", function(event, num){
+//			_this.showByPage(objs_to_show, num);
+//		});
+//		
+//	_this.showByPage(objs_to_show, 1);
 	
 };
 
@@ -177,15 +179,15 @@ Members.prototype.doShow = function(objs_to_show){
 			$(jq(row_id)).append(div);
 			
 			//adjust the mouse over member div
-			$(jq( div_id )).hover(function() { // Mouse over
-			  $(this).siblings().stop().fadeTo(300, 0.6);
-			  $(this).parent().siblings().stop().fadeTo(300, 0.3); 
-			  $(this).toggleClass('rotated');
-			}, function() { // Mouse out
-			  $(this).siblings().stop().fadeTo(300, 1);
-			  $(this).parent().siblings().stop().fadeTo(300, 1);
-			  $(this).toggleClass('rotated');
-			});
+//			$(jq( div_id )).hover(function() { // Mouse over
+//			  $(this).siblings().stop().fadeTo(300, 0.6);
+//			  $(this).parent().siblings().stop().fadeTo(300, 0.3); 
+//			  $(this).toggleClass('rotated');
+//			}, function() { // Mouse out
+//			  $(this).siblings().stop().fadeTo(300, 1);
+//			  $(this).parent().siblings().stop().fadeTo(300, 1);
+//			  $(this).toggleClass('rotated');
+//			});
 			
 			//click on member
 			$(jq(div_id)).click(function(event) {
