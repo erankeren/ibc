@@ -202,7 +202,10 @@ Members.prototype.doShow = function(objs_to_show){
 				head += "<h6><span class=\"member-text\">" + member.position + "</span></h6>";
 				
 				var body = "";
-				body += "<h6><span>" + member.email + "</span></h6>";
+                if (member.show_email == 1) {
+                    body += "<h6><span>" + member.email + "</span></h6>";
+                }
+				
 				body += "<h6><span>" + member.phone + "</span></h6>";
 				
 				var webpage = member.webpage.replace(/(?:\r\n|\r|\n)/g, ',');				

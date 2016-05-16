@@ -23,7 +23,8 @@ def randomword(length):
 def setup_database():
 	print ("setup db")
 	with sqlite3.connect(DB_STRING) as con:
-		con.execute("CREATE TABLE IF NOT EXISTS members (last_name_hebrew TEXT, first_name_hebrew TEXT, last_name_english TEXT, first_name_english TEXT, email TEXT, phone TEXT, company TEXT, position TEXT, category TEXT, tags TEXT, webpage TEXT, picurl TEXT)")
+		con.execute("DROP TABLE members")
+		con.execute("CREATE TABLE IF NOT EXISTS members (last_name_hebrew TEXT, first_name_hebrew TEXT, last_name_english TEXT, first_name_english TEXT, email TEXT, phone TEXT, company TEXT, position TEXT, category TEXT, tags TEXT, webpage TEXT, picurl TEXT, show_email TEXT)")
 		con.execute("CREATE TABLE IF NOT EXISTS login (email TEXT, password TEXT)")
 
 		#making all emails lower case
@@ -45,17 +46,13 @@ def download():
 	json_object = json.loads(raw)
 	
 	with sqlite3.connect(DB_STRING) as con:
-		con.execute("DELETE FROM members")
 		for itr in json_object:
-			str = "INSERT INTO members (last_name_english, first_name_english, last_name_hebrew, first_name_hebrew, email, phone, company, position, category, tags, webpage, picurl) VALUES (\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\")".format(itr["last_name_english"].encode('utf-8'), itr["first_name_english"].encode('utf-8'), itr["last_name_hebrew"].encode('utf-8'), itr["first_name_hebrew"].encode('utf-8'), itr["email"].encode('utf-8'), itr["phone"].encode('utf-8'), itr["company"].encode('utf-8'), itr["position"].encode('utf-8'), itr["category"].encode('utf-8'), itr["tags"].encode('utf-8'), itr["webpage"].encode('utf-8'), itr["picurl"].encode('utf-8'))
+			str = "INSERT INTO members (last_name_english, first_name_english, last_name_hebrew, first_name_hebrew, email, phone, company, position, category, tags, webpage, picurl, show_email) VALUES (\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\")".format(itr["last_name_english"].encode('utf-8'), itr["first_name_english"].encode('utf-8'), itr["last_name_hebrew"].encode('utf-8'), itr["first_name_hebrew"].encode('utf-8'), itr["email"].encode('utf-8'), itr["phone"].encode('utf-8'), itr["company"].encode('utf-8'), itr["position"].encode('utf-8'), itr["category"].encode('utf-8'), itr["tags"].encode('utf-8'), itr["webpage"].encode('utf-8'), itr["picurl"].encode('utf-8'), itr["show_email"].encode('utf-8'))
 			con.execute(str)
 
 if __name__ == '__main__':
-	while True:
-		download()
-		setup_database()
-		print ("sleep")
-		time.sleep(3600)
+    setup_database()
+    download()
 
 
 	
