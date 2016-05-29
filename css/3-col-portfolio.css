@@ -21,16 +21,24 @@ body {
 }
 
 .member-name {
-	font-weight: bold;
+	font-weight: bolder;
 	font-variant: small-caps;
-	font-style: italic;
-	font-size: large;
-	color: darkblue;
+	font-style: oblique;
+	font-size: 20px;
+	color: black;
+	font-family: monospace;
 }
 
 .member-text {
-	color: red;
+	color: firebrick;
 	font-weight: bold;
+}
+
+.member-cat {
+	font-size:smaller; 
+	color:darkblue; 
+	font-weight:bold;
+	font-family: monospace;
 }
 
 footer {

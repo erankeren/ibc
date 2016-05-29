@@ -81,7 +81,7 @@ Members.prototype.createDiv = function(div_id, member) {
 						<!-- <p>" + member.category + "</p> -->\
 						<h6><span class=\"member-text\">" + member.company + "</span></h6> \
 						<h6><span class=\"member-text\">" + member.position + "</span></h6> \
-						<h9><span style=\"font-size:smaller; color:darkolivegreen; font-weight:200;\">" + member.category + "</span></h9> \
+						<h9><span class=\"member-cat\">" + member.category + "</span></h9> \
 					</div>"
 		
 	return item;           				       	
