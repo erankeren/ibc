@@ -35,9 +35,8 @@ body {
 }
 
 .member-cat {
-	font-size:smaller; 
-	color:darkblue; 
-	font-weight:bold;
+	font-size:medium; 
+	color:darkblue;
 	font-family: monospace;
 }
 
