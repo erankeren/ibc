@@ -28,15 +28,9 @@ def setup_database():
 		con.execute("CREATE TABLE IF NOT EXISTS login (email TEXT, password TEXT)")
 
 		#making all emails lower case
-		con.execute("UPDATE members SET email = lower(email)");
+		con.execute("UPDATE members SET email = lower(email)")
+			
 
-		cur = con.cursor()
-		cur.execute("SELECT email FROM members WHERE email NOT IN (SELECT email from login) and email != ''")
-		res = cur.fetchall();
-
-		for index in res:
-			str = "INSERT INTO login (email,password) VALUES (\"{}\",\"{}\")".format(index[0], randomword(12))
-			con.execute(str)
 			
 def download():
 	print ("download")
@@ -49,10 +43,25 @@ def download():
 		for itr in json_object:
 			str = "INSERT INTO members (last_name_english, first_name_english, last_name_hebrew, first_name_hebrew, email, phone, company, position, category, tags, webpage, picurl, show_email) VALUES (\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\",\"{}\")".format(itr["last_name_english"].encode('utf-8'), itr["first_name_english"].encode('utf-8'), itr["last_name_hebrew"].encode('utf-8'), itr["first_name_hebrew"].encode('utf-8'), itr["email"].encode('utf-8'), itr["phone"].encode('utf-8'), itr["company"].encode('utf-8'), itr["position"].encode('utf-8'), itr["category"].encode('utf-8'), itr["tags"].encode('utf-8'), itr["webpage"].encode('utf-8'), itr["picurl"].encode('utf-8'), itr["show_email"].encode('utf-8'))
 			con.execute(str)
+	
+	make_passwords()
+			
+def make_passwords():
+	print ("gen passwords")
+	with sqlite3.connect(DB_STRING) as con:
+		cur = con.cursor()
+		cur.execute("SELECT email as email1 FROM members WHERE email1 NOT IN (SELECT email from login)")
+		res = cur.fetchall();
+
+		for index in res:
+			print (index[0])
+			str = "INSERT INTO login (email,password) VALUES (\"{}\",\"{}\")".format(index[0], randomword(12))
+			con.execute(str)
 
 if __name__ == '__main__':
     setup_database()
     download()
+	
 
 
 	
