@@ -36,7 +36,9 @@ Categories.prototype.fill = function(){
 
 	var _this = this;
 	
-	_this.categories.push("General");
+	if (_this.categories.indexOf("General") == -1) {
+		_this.categories.push("General");
+	}
 		
 	_this.categories.sort();
 	
