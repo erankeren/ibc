@@ -178,17 +178,6 @@ Members.prototype.doShow = function(objs_to_show){
 			//add to row										
 			$(jq(row_id)).append(div);
 			
-			//adjust the mouse over member div
-//			$(jq( div_id )).hover(function() { // Mouse over
-//			  $(this).siblings().stop().fadeTo(300, 0.6);
-//			  $(this).parent().siblings().stop().fadeTo(300, 0.3); 
-//			  $(this).toggleClass('rotated');
-//			}, function() { // Mouse out
-//			  $(this).siblings().stop().fadeTo(300, 1);
-//			  $(this).parent().siblings().stop().fadeTo(300, 1);
-//			  $(this).toggleClass('rotated');
-//			});
-			
 			//click on member
 			$(jq(div_id)).click(function(event) {
 				var member = _this.div_id_to_member_mapping[this.id];
@@ -213,7 +202,7 @@ Members.prototype.doShow = function(objs_to_show){
  				for(var i = 0; i < str_array.length; i++) {
  					// Trim the excess whitespace.
  					str_array[i] = str_array[i].replace(/^\s*/, "").replace(/\s*$/, "");
- 					body += "<h6><a href=\"#\"\">" + str_array[i] + "</a></h6>";
+ 					body += "<h6><a href='" + str_array[i] + "' target='_blank'>" + str_array[i] + "</a></h6>";
  				}
  				
  				
