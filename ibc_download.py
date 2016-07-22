@@ -57,6 +57,17 @@ def make_passwords():
 			print (index[0])
 			str = "INSERT INTO login (email,password) VALUES (\"{}\",\"{}\")".format(index[0], randomword(12))
 			con.execute(str)
+	
+	lower_case_emails()
+			
+def lower_case_emails():
+	print ("lowercase emails")
+	with sqlite3.connect(DB_STRING) as con:
+		cur = con.cursor()
+		cur.execute("UPDATE members SET email = LOWER(email)")
+		cur.execute("UPDATE login SET email = LOWER(email)")
+			
+	
 
 if __name__ == '__main__':
     setup_database()
